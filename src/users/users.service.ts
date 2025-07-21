@@ -62,8 +62,27 @@ export class UsersService {
     }
   }
 
-  async findAll() {
-    return await this.usersRepository.find();
+  async findAll(role?: UserRoleEnum, page: number = 1, limit: number = 8) {
+    try {
+      const query = this.usersRepository
+        .createQueryBuilder('users')
+        .orderBy('createdAt', 'DESC')
+        .skip((page - 1) * limit)
+        .take(limit);
+
+      if (role) {
+        query.andWhere('role = :role', { role });
+      }
+
+      const users = await query.getMany();
+      return users;
+    } catch (error) {
+      throw new BadRequestException({
+        statusCode: 500,
+        message: 'something went wrong',
+        error: error.message,
+      });
+    }
   }
 
   async findOne(id: number) {

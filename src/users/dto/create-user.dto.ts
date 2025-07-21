@@ -13,7 +13,7 @@ import { Transform } from 'class-transformer';
 export class CreateUserDto {
   @IsString({ message: 'mobile must be a string' })
   @IsNotEmpty({ message: 'mobile is required' })
-  @Matches(phoneRegex as RegExp, { message: 'mobile number is not valid' })
+  @Matches(phoneRegex, { message: 'mobile number is not valid' })
   @Transform(({ value }) => value.trim())
   mobile: string;
 
@@ -25,7 +25,7 @@ export class CreateUserDto {
   @IsString({ message: 'password must be a string' })
   @IsNotEmpty({ message: 'password is required' })
   @MinLength(8, { message: 'password must be at least 8 characters long' })
-  @Matches(passwordRegex as RegExp, {
+  @Matches(passwordRegex, {
     message:
       'password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
   })

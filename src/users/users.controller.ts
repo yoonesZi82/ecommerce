@@ -8,11 +8,13 @@ import {
   Delete,
   Res,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Response } from 'express';
+import { UserQueryDto } from './dto/user-query.dto';
 
 @Controller('users')
 export class UsersController {
@@ -29,8 +31,17 @@ export class UsersController {
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async findAll(@Res() res: Response, @Query() userQueryDto: UserQueryDto) {
+    const users = await this.usersService.findAll(
+      userQueryDto.role,
+      userQueryDto.page,
+      userQueryDto.limit,
+    );
+    res.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      message: 'users fetched successfully',
+      data: users,
+    });
   }
 
   @Get(':id')
