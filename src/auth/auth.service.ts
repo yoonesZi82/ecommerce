@@ -30,12 +30,6 @@ export class AuthService {
         password: hashPassword,
         role,
       });
-
-      return {
-        statusCode: HttpStatus.CREATED,
-        message: 'user created successfully',
-        data: null,
-      };
     } catch (error) {
       if (
         error instanceof HttpException ||

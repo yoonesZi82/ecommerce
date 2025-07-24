@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import UserRoleEnum from '../enum/userRoleEnum';
+import { Address } from '@/address/entities/address.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -17,6 +18,9 @@ export class User {
 
   @Column({ type: 'enum', enum: UserRoleEnum, default: UserRoleEnum.USER })
   role: UserRoleEnum;
+
+  @OneToMany(() => Address, (address) => address.user)
+  addresses: Address[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
