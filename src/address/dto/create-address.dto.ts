@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsOptional, IsString, Matches } from 'class-validator';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+} from 'class-validator';
 
 export class CreateAddressDto {
   @IsString()
@@ -28,4 +34,8 @@ export class CreateAddressDto {
   @IsString()
   @IsOptional()
   description: string;
+
+  @IsInt()
+  @IsNotEmpty()
+  userId: number;
 }
