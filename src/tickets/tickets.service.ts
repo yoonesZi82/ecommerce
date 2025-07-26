@@ -102,7 +102,26 @@ export class TicketsService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} ticket`;
+  async findOne(id: number) {
+    try {
+      const ticket = await this.ticketRepository.findOne({
+        where: { id },
+        relations: ['replies', 'replayTo'],
+      });
+      return ticket;
+    } catch (error) {
+      if (
+        error instanceof HttpException ||
+        error instanceof BadRequestException
+      ) {
+        throw error;
+      }
+
+      throw new BadRequestException({
+        statusCode: 500,
+        message: 'something went wrong',
+        error: error.message,
+      });
+    }
   }
 }
