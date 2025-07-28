@@ -9,7 +9,10 @@ export class Category {
   @Column({ nullable: false })
   title: string;
 
-  @ManyToMany(() => Product, (product) => product.categories)
+  @ManyToMany(() => Product, (product) => product.categories, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   products: Product[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

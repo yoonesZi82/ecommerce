@@ -24,7 +24,10 @@ export class Product {
   @Column({ nullable: false })
   stock: number;
 
-  @ManyToMany(() => Category, (category) => category.products)
+  @ManyToMany(() => Category, (category) => category.products, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   @JoinTable({
     name: 'products_category',
     joinColumn: { name: 'product_id', referencedColumnName: 'id' },
