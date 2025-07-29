@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
@@ -8,6 +8,8 @@ import { TicketsModule } from './tickets/tickets.module';
 import { ProductsModule } from './products/products.module';
 import { CategoriesModule } from './categories/categories.module';
 import { OrdersModule } from './orders/orders.module';
+import { IpTrackerModule } from './ip-tracker/ipTracker.module';
+import { IpTrackerMiddleware } from './middlewares/ip-tracker/ipTracker.middleware';
 
 @Module({
   imports: [
@@ -32,6 +34,13 @@ import { OrdersModule } from './orders/orders.module';
     ProductsModule,
     CategoriesModule,
     OrdersModule,
+    IpTrackerModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(IpTrackerMiddleware).forRoutes('*'); // OR
+    // .forRoutes({path : 'users' , method : RequestMethod.POST}); // OR
+    // .forRoutes(UsersController)
+  }
+}
