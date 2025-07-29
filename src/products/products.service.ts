@@ -1,10 +1,16 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { Category } from '@/categories/entities/category.entity';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { UsersService } from '@/users/users.service';
 
 @Injectable()
 export class ProductsService {
@@ -13,6 +19,7 @@ export class ProductsService {
     private readonly productRepository: Repository<Product>,
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
+    private readonly userService: UsersService,
   ) {}
 
   async create(productRepository: CreateProductDto) {
@@ -117,8 +124,24 @@ export class ProductsService {
         relations: ['categories'],
       });
 
+      if (!product) {
+        throw new HttpException(
+          {
+            statusCode: HttpStatus.NOT_FOUND,
+            message: 'product not found',
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
       return product;
     } catch (error) {
+      if (
+        error instanceof HttpException ||
+        error instanceof BadRequestException
+      ) {
+        throw error;
+      }
       throw new HttpException(
         {
           statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -128,5 +151,16 @@ export class ProductsService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async addItemToBasket(userId: number, productId: number) {
+    const product = await this.findOne(productId);
+
+    return await this.userService.addProductToBasket(userId, product);
+  }
+
+  async removeProductFromBasket(userId: number, productId: number) {
+    const product = await this.findOne(productId);
+    return await this.userService.RemoveProductFromBasket(userId, product);
   }
 }

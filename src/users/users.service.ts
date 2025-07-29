@@ -85,7 +85,10 @@ export class UsersService {
 
   async findOne(id: number) {
     try {
-      const user = await this.usersRepository.findOne({ where: { id } });
+      const user = await this.usersRepository.findOne({
+        where: { id },
+        relations: ['baskets'],
+      });
 
       if (!user) {
         throw new HttpException(
@@ -138,6 +141,22 @@ export class UsersService {
         error: error.message,
       });
     }
+  }
+
+  async addProductToBasket(userId: number, product) {
+    const user = await this.findOne(userId);
+    user.baskets.push(product);
+    return await this.usersRepository.save(user);
+  }
+
+  async RemoveProductFromBasket(userId: number, product) {
+    const user = await this.findOne(userId);
+    const productIndex = user.baskets.findIndex(
+      (item) => item.id === product.id,
+    );
+
+    user.baskets.splice(productIndex, 1);
+    return await this.usersRepository.save(user);
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {

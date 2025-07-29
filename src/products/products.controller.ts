@@ -8,6 +8,7 @@ import {
   Patch,
   Param,
   ParseIntPipe,
+  Delete,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -66,6 +67,39 @@ export class ProductsController {
       statusCode: HttpStatus.OK,
       message: 'update product successfully',
       data: product,
+    });
+  }
+
+  @Post('add-to-basket')
+  async addItemToBasket(
+    @Body() addToBasketItem: { userId: number; productId: number },
+    @Res() res: Response,
+  ) {
+    const product = await this.productsService.addItemToBasket(
+      addToBasketItem.userId,
+      addToBasketItem.productId,
+    );
+    res.status(HttpStatus.CREATED).json({
+      statusCode: HttpStatus.CREATED,
+      message: 'product add ro basket successfully',
+      data: product,
+    });
+  }
+
+  @Delete('remove-from-basket')
+  async removeProductFromBasket(
+    @Body() itemForRemove: { userId: number; productId: number },
+    @Res() res: Response,
+  ) {
+    await this.productsService.removeProductFromBasket(
+      itemForRemove.userId,
+      itemForRemove.productId,
+    );
+
+    res.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      message: 'product delete from basket successfully',
+      data: null,
     });
   }
 }

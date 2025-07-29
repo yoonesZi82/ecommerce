@@ -1,4 +1,5 @@
 import { Category } from '@/categories/entities/category.entity';
+import { User } from '@/users/entities/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -34,6 +35,12 @@ export class Product {
     inverseJoinColumn: { name: 'category_id', referencedColumnName: 'id' },
   })
   categories: Category[];
+
+  @ManyToMany(() => User, (user) => user.baskets, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
+  users: User[];
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
