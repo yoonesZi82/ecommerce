@@ -16,12 +16,17 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Response } from 'express';
 import { UserQueryDto } from './dto/user-query.dto';
+import { ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+// @ApiExcludeController() // For not show controller in swagger
+@ApiTags('manage-users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @ApiExcludeEndpoint()
   @Post()
+  @ApiOperation({ summary: 'Create user' })
   async create(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
     await this.usersService.create(createUserDto);
     res.status(HttpStatus.CREATED).json({

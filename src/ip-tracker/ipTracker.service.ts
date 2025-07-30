@@ -11,7 +11,7 @@ import { Repository } from 'typeorm';
 
 @Injectable()
 export class IpTrackerService {
-  private readonly MAX_REQUESTS = 4;
+  private readonly MAX_REQUESTS = 10;
   private readonly WINDOW_MINUTES = 1;
   private readonly BLOCK_MINUTES = 2;
   private readonly TEHRAN_TIMEZONE = 3.5 * 60 * 60 * 1000;

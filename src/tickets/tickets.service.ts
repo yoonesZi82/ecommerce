@@ -59,7 +59,7 @@ export class TicketsService {
 
       const ticket = this.ticketRepository.create({
         ...otherData,
-        user: user,
+        user,
         replayTo: replayToTicket || undefined,
       });
       await this.ticketRepository.save(ticket);
