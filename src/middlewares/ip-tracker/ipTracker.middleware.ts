@@ -7,7 +7,7 @@ export class IpTrackerMiddleware implements NestMiddleware {
   constructor(private readonly ipTrackerService: IpTrackerService) {}
 
   use(req: Request, res: Response, next: () => void) {
-    this.ipTrackerService.test(req);
+    this.ipTrackerService.track(req.ip as string);
     next();
   }
 }
