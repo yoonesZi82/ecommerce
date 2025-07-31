@@ -10,6 +10,9 @@ import { CategoriesModule } from './categories/categories.module';
 import { OrdersModule } from './orders/orders.module';
 import { IpTrackerModule } from './ip-tracker/ipTracker.module';
 import { IpTrackerMiddleware } from './middlewares/ip-tracker/ipTracker.middleware';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { RolesGuard } from './auth/guards/roles.guard';
 
 @Module({
   imports: [
@@ -35,6 +38,16 @@ import { IpTrackerMiddleware } from './middlewares/ip-tracker/ipTracker.middlewa
     CategoriesModule,
     OrdersModule,
     IpTrackerModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class AppModule {

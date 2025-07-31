@@ -10,15 +10,27 @@ import {
   Query,
   ParseIntPipe,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Response } from 'express';
 import { UserQueryDto } from './dto/user-query.dto';
-import { ApiExcludeEndpoint, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiExcludeEndpoint,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
+import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
+import { Roles } from '@/auth/decorator/roles.decorator';
+import UserRoleEnum from './enum/userRoleEnum';
 
 // @ApiExcludeController() // For not show controller in swagger
+@Roles(UserRoleEnum.ADMIN)
+@ApiBearerAuth()
 @ApiTags('manage-users')
 @Controller('users')
 export class UsersController {
@@ -36,6 +48,27 @@ export class UsersController {
     });
   }
 
+  // @ApiBearerAuth() // for this endpoint
+  @ApiQuery({
+    name: 'role',
+    required: false,
+    type: String,
+    enum: UserRoleEnum,
+    description: 'role of user',
+  })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: 'page number',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: 'limit of users',
+  })
+  @UseGuards(JwtAuthGuard)
   @Get()
   async findAll(@Res() res: Response, @Query() userQueryDto: UserQueryDto) {
     const users = await this.usersService.findAll(
@@ -50,6 +83,7 @@ export class UsersController {
     });
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   async findOne(@Param('id', ParseIntPipe) id: number, @Res() res: Response) {
     const user = await this.usersService.findOne(id);
